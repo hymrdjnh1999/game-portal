@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game Bạn Bè</title>
+  <meta name="description" content="Cổng game chơi với bạn bè: Bầu Cua, 3 Cây, Poker — chỉ dùng xu ảo." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>" />
+  <style>
+    /* Same palette as the bau-cua / ba-cay games so the portal feels like one product */
+    :root {
+      --red: #b71c1c;
+      --red-dark: #7f0000;
+      --gold: #ffc107;
+      --gold-dark: #c79100;
+      --cream: #fff8e1;
+      --ink: #3e2723;
+      --ok: #69f0ae;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--cream);
+      background: radial-gradient(circle at top, #c62828, var(--red-dark) 70%) fixed;
+      min-height: 100vh;
+    }
+    main { max-width: 960px; margin: 0 auto; padding: 40px 16px; }
+    header { text-align: center; margin-bottom: 32px; }
+    h1 {
+      margin: 0; color: var(--gold); font-size: clamp(40px, 9vw, 64px); line-height: 1;
+      text-shadow: 0 3px 0 var(--red-dark);
+    }
+    .suits { display: block; font-size: .45em; color: var(--cream); letter-spacing: 8px; margin-top: 8px; }
+    .sub { margin: 12px 0 0; opacity: .85; }
+
+    .games { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .card {
+      display: flex; flex-direction: column; gap: 10px; padding: 24px;
+      background: rgba(0,0,0,.25); border: 2px solid var(--gold); border-radius: 18px;
+      color: inherit; text-decoration: none; transition: transform .12s, background .12s;
+    }
+    .card:hover, .card:focus-visible { transform: translateY(-4px); background: rgba(0,0,0,.35); outline: none; }
+    .card:focus-visible { box-shadow: 0 0 0 3px var(--cream); }
+    .icon { font-size: 48px; line-height: 1; }
+    .card h2 { margin: 0; color: var(--gold); font-size: 26px; }
+    .card p { margin: 0; opacity: .85; font-size: 14px; flex: 1; }
+    .play {
+      margin-top: 6px; text-align: center; padding: 12px; border-radius: 10px; font-weight: 700;
+      background: linear-gradient(var(--gold), var(--gold-dark)); color: var(--ink);
+      box-shadow: 0 3px 0 rgba(0,0,0,.3);
+    }
+    .status { font-size: 12px; opacity: .8; display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: blink 1s infinite; }
+    .status.ready .dot { background: var(--ok); animation: none; }
+    @keyframes blink { 50% { opacity: .2; } }
+
+    footer { margin-top: 32px; text-align: center; font-size: 13px; opacity: .7; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Game Bạn Bè<span class="suits">♦ ♥ ♣ ♠</span></h1>
+      <p class="sub">Chọn game, tạo phòng rồi gửi mã cho bạn bè — chỉ dùng xu ảo</p>
+    </header>
+
+    <section class="games">
+      <a class="card" href="https://bau-cua-nzdr.onrender.com/" data-wake>
+        <div class="icon">🎲</div>
+        <h2>Bầu Cua Tôm Cá</h2>
+        <p>Đặt cược vào 6 linh vật, lắc 3 xúc xắc — trò quen thuộc ngày Tết.</p>
+        <div class="status"><span class="dot"></span><span class="label">Đang khởi động…</span></div>
+        <div class="play">Chơi ngay</div>
+      </a>
+
+      <a class="card" href="https://ba-cay.onrender.com/" data-wake>
+        <div class="icon">🃏</div>
+        <h2>3 Cây</h2>
+        <p>Mỗi người 3 lá, so điểm với nhà cái. Nhanh gọn, hồi hộp.</p>
+        <div class="status"><span class="dot"></span><span class="label">Đang khởi động…</span></div>
+        <div class="play">Chơi ngay</div>
+      </a>
+
+      <a class="card" href="https://poker-online-kqek.onrender.com/" data-wake>
+        <div class="icon">♠️</div>
+        <h2>Poker</h2>
+        <p>Texas Hold'em với mù nhỏ/mù lớn, all-in, run it twice.</p>
+        <div class="status"><span class="dot"></span><span class="label">Đang khởi động…</span></div>
+        <div class="play">Chơi ngay</div>
+      </a>
+    </section>
+
+    <footer>Game miễn phí, server có thể mất ~30–60 giây để khởi động lần đầu.</footer>
+  </main>
+
+  <script>
+    // Render free-tier servers sleep when idle. Ping every game as soon as the
+    // portal opens so they are awake by the time the player picks one.
+    // no-cors gives an opaque response, but it only resolves once the server answers.
+    document.querySelectorAll('[data-wake]').forEach((card) => {
+      const status = card.querySelector('.status');
+      const label = card.querySelector('.label');
+      fetch(card.href, { mode: 'no-cors', cache: 'no-store' })
+        .then(() => { status.classList.add('ready'); label.textContent = 'Sẵn sàng'; })
+        .catch(() => { label.textContent = 'Chưa phản hồi — vẫn có thể bấm vào'; });
+    });
+  </script>
+</body>
+</html>
